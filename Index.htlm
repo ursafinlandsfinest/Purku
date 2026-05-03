@@ -22,7 +22,7 @@
 <body>
 
 <div class="top">
-  Purkutuomion saaneet rakennukset
+  Julkiset rakennukset joilla purkupäätös
 </div>
 
 <div id="map"></div>
@@ -36,29 +36,22 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 fetch("data.json")
-  .then(res => res.json())
+  .then(r => r.json())
   .then(data => {
-
     data.forEach(item => {
 
-      if (!item.location_hint) return;
+      if (!item.organization) return;
 
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${item.location_hint}`)
-        .then(res => res.json())
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${item.organization}`)
+        .then(r => r.json())
         .then(loc => {
-
           if (!loc.length) return;
 
-          const lat = loc[0].lat;
-          const lon = loc[0].lon;
-
-          L.marker([lat, lon])
+          L.marker([loc[0].lat, loc[0].lon])
             .addTo(map)
-            .bindPopup(`
-              <b>${item.title || "Rakennus"}</b><br/>
-              ${item.organization || ""}
-            `);
+            .bindPopup(item.title || "Rakennus");
         });
+
     });
   });
 </script>
